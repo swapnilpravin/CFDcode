@@ -1,0 +1,10 @@
+Creating a GUI for monitoring, and providing parameters graphically:
+
+1. Create a GUI program and launch MPI program usign mpirun. Data communication between MPI program and GUI would be difficult.
+
+???
+2. Start GUI as one of the processes. Create two seperate communicators instead of using MPI_COMM_WORLD. Run MPI processes inside the "computing comm" and launch GUI inside the "gui comm". Data can be sent/recieved/broadcast between the processes.
+???
+	May not be how a communicator works.
+
+
