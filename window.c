@@ -15,9 +15,24 @@
 #include <assert.h>   // I include this to test return values the lazy way
 #include <unistd.h>   // So we got the profile for 10 seconds
 
+#include <stdio.h>
+
 #define NIL (0)       // A name for the void pointer
 
-main()
+unsigned int WIDTH = 600, HEIGHT=400;
+
+struct plotProperties
+{
+	double xmin, xmax;
+	double ymin, ymax;
+	char* xlabel, *ylabel;
+	int xtics, ytics;
+};
+
+// Set default plot properties
+struct plotProperties plotProp = {0, 1, 0, 1, "x", "y", 3, 3};
+
+int main()
 {
       // Open the display
 
@@ -31,8 +46,8 @@ main()
 
       // Create the window
 
-      Window w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0, 
-				     200, 100, 0, blackColor, blackColor);
+      Window w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 10, 10, 
+				     WIDTH, HEIGHT, 0, blackColor, blackColor);
 
       // We want to get MapNotify events
 
@@ -51,12 +66,16 @@ main()
       XSetForeground(dpy, gc, whiteColor);
 
       // Wait for the MapNotify event
-
-      for(;;) {
+	KeyCode xKey = XKeysymToKeycode(dpy, XStringToKeysym("x"));
+      while(1) {
 	    XEvent e;
 	    XNextEvent(dpy, &e);
-	    if (e.type == MapNotify)
-		  break;
+	    //if (e.type == MapNotify)
+		  //break;
+		if (e.type == KeyPress && e.xkey.keycode == xKey)
+		{
+			printf("x key pressed\n");
+		}
       }
 
       // Draw the line
@@ -69,6 +88,9 @@ main()
 
       // Wait for 10 seconds
 
-      sleep(10);
+	  printf("%f %f %f %f \n", plotProp.xmin, plotProp.xmax, plotProp.ymin, plotProp.ymax);
+      sleep(5);
+
+	  return 0;
 }
 
