@@ -294,7 +294,7 @@ contains
 	
 	
 	
-	subroutine calcUstar_Implicit(u_star,v_star,E_rms,NITS_final,u,v,Bx,By)
+	subroutine calcUstar_Implicit(u_star,v_star,E_rms_U,E_rms_V,NITS_final,u,v,Bx,By)
 	
 		double precision, dimension(ny,0:m+1) :: u, v, u_star,v_star
 		double precision, dimension(ny,0:m+1) :: u_star_new,v_star_new
@@ -303,8 +303,8 @@ contains
 		
 		double precision ,dimension(ny,1:m) :: Bx, By
 		
-		double precision, dimension(ny,1:m) :: E
-		double precision :: E_rms, E_sqr_loc, E_sqr
+		double precision, dimension(ny,1:m) :: E_U, E_V
+		double precision :: E_rms_U, E_rms_V, E_sqr_loc_U, E_sqr_loc_V, E_sqr_U, E_sqr_V
         integer :: NITS_final
 		integer :: i, n, Nproc, ierr, id
 
@@ -344,15 +344,19 @@ contains
 
 			!if (id==0) read(*,*)
 
-			E = u_star_new(:,1:m) - u_star(:,1:m)
-			E_sqr_loc = sum(E**2)
+			E_U = u_star_new(:,1:m) - u_star(:,1:m)
+			E_V = v_star_new(:,1:m) - v_star(:,1:m)
+			E_sqr_loc_U = sum(E_U**2)
+			E_sqr_loc_V = sum(E_V**2)
 
-			call mpi_allreduce(E_sqr_loc,E_sqr,1,MPI_DOUBLE_PRECISION,MPI_SUM,MPI_COMM_WORLD,ierr)
-			E_rms = sqrt(E_sqr/n)
+			call mpi_allreduce(E_sqr_loc_U,E_sqr_U,1,MPI_DOUBLE_PRECISION,MPI_SUM,MPI_COMM_WORLD,ierr)
+			call mpi_allreduce(E_sqr_loc_V,E_sqr_V,1,MPI_DOUBLE_PRECISION,MPI_SUM,MPI_COMM_WORLD,ierr)
+			E_rms_U = sqrt(E_sqr_U/n)
+			E_rms_V = sqrt(E_sqr_V/n)
 
 			!if (id==0) print*, 'U_star error:', E_rms
 			
-			if (E_rms<tol) then
+			if (E_rms_U < tol .and. E_rms_V < tol) then
 				exit
 			end if
 			

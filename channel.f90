@@ -14,7 +14,7 @@ subroutine channel()
 
 	double precision ,dimension(ny-2,1:m) :: D_CONV_U, D_CONV_V, DEL2U, DEL2V, DpDx, DpDy
 	
-    double precision :: R, E_P, E_U
+    double precision :: R, E_P, E_U, E_V
 	integer :: NITS_final_P, NITS_final_U
 
 	integer :: i, j
@@ -66,7 +66,7 @@ subroutine channel()
 		forces%Bx = forces%F + forces%Hx
 		forces%By = forces%Hy
 		
-		call calcUstar_Implicit(field%u_star,field%v_star,E_U,NITS_final_U,field%u,field%v,forces%Bx,forces%By)
+		call calcUstar_Implicit(field%u_star,field%v_star,E_U,E_V,NITS_final_U,field%u,field%v,forces%Bx,forces%By)
 
         !if(id==0) print*, 'communication done'
         
@@ -113,12 +113,13 @@ subroutine channel()
         if (id==0) then       
             if (mod(i,nLog)==0) then
                 call writeLogToTerminal_MPI(i, &
-                'Umax','double',Umax, &
-                'Pmax','double',Pmax, &
-                'Pressure Error','double',E_P, &
-                'Pressure Iterations','integer',dble(NITS_final_P), &
-				'Velocity Error','double',E_U, &
-				'Velocity Iterations','integer',dble(NITS_final_U) )
+                'Pressure error','double',E_P, &
+                'Pressure solver iterations','integer',dble(NITS_final_P), &
+				'Velocity U error','double',E_U, &
+				'Velocity V error','double',E_V, &
+				'Velocity solver iterations','integer',dble(NITS_final_U), &
+				'Umax','double',Umax, &
+                'Pmax','double',Pmax )
             end if
             
             
