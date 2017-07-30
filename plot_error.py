@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 
 logfile = sys.argv[1]
 
@@ -38,19 +39,30 @@ for line in f:
 #print(P_err)
 #print(U_err)
 #print(V_err)
-print(P_itr)
-print(U_itr)
+#print(P_itr)
+#print(U_itr)
 
-plt.subplot(2,1,1)
+timestep = np.array(timestep)
+
+gs = gridspec.GridSpec(2,1,height_ratios=[2,1])
+
+plt.subplot(gs[0])
 plt.plot(timestep, P_err, label='Pressure error')
 plt.plot(timestep, U_err, label='Velocity U error')
 plt.plot(timestep, V_err, label='Velocity V error')
-plt.xlabel('Timesteps')
+plt.ylabel('Error')
 plt.legend()
-plt.show()
+plt.title('Run monitor')
 
-plt.subplot(2,1,2)
-plt.bar(timesteps, P_itr)
+bar_width = 3
+
+plt.subplot(gs[1])
+plt.bar(timestep, P_itr, bar_width, label='Pressure')
+plt.bar(timestep+bar_width, U_itr, bar_width, label='Velocity')
+plt.xlabel('Timesteps')
+plt.ylabel('Solver iterations')
+plt.legend()
+
 plt.show()
 
 f.close()
