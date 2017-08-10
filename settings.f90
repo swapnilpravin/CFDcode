@@ -17,8 +17,10 @@ use mpi
     							! write: results to file every nwrite timesteps
     double precision :: RADIUS	! for testing: circle radius
     
+
+    integer :: N_IBpoints
     
-    
+
     contains
         subroutine setup(filename)
 
@@ -50,7 +52,8 @@ use mpi
                 read (10,*) temp, nLog
                 read (10,*) temp, nWrite
                 read (10,*) temp, RADIUS
-                
+                read (10,*) temp, N_IBpoints
+
 			    close(10)
 
             end if
@@ -72,6 +75,8 @@ use mpi
             call mpi_bcast(U0,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
             call mpi_bcast(nLog,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
             call mpi_bcast(nWrite,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(RADIUS,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(N_IBpoints,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
             !call mpi_barrier(MPI_COMM_WORLD,ierr)
 

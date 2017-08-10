@@ -7,4 +7,12 @@ Creating a GUI for monitoring, and providing parameters graphically:
 ???
 	May not be how a communicator works.
 
-
+--------
+IBM
+--------
+- Set up variables in partitioner
+- assign in settings.f90 and setup.txt
+	- setup.txt: number of points, ...
+- calculate IBM force using location variables
+- use it in channel.f90
+- update positions in a new subroutine in IBM.f90 and call that subroutine in channel.f90

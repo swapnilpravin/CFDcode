@@ -23,11 +23,24 @@ type :: forces_t
 	double precision, dimension(:,:), allocatable :: Bx, By			! Total body force (sum of all other forces)
 end type forces_t
 
+type :: point_t
+	double precision :: x
+	double precision :: y
+end type point_t
+
+type :: IBMesh_t
+	! locations of immersed Lagrangian boundary points
+	type(point_t), dimension(:), allocatable :: X_k
+
+	! locations of equilibrium positions of the Lagrangian points
+	type(point_t), dimension(:), allocatable :: X_eq
+end type IBMesh_t
 
 ! global data variables
 type(mesh_t) :: mesh
 type(field_t) :: field
 type(forces_t) :: forces
+type(IBMesh_t) :: IBMesh
 
 ! Number of nodes in x-direction on this processor
 integer :: m
@@ -74,6 +87,11 @@ subroutine setPartitions()
     allocate(forces%Hy(Ny,m))
 	allocate(forces%Bx(Ny,m))
 	allocate(forces%By(Ny,m))
+
+	! Immersed boundary mesh locations
+	allocate(IBMesh%X_k(N_IBpoints))
+	allocate(IBMesh%X_eq(N_IBpoints))
+
 
     if (id==0) then
         write(*,'(A,I0,A)') 'Memory allocated on ', Nproc, ' processors'
