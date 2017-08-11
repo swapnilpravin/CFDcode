@@ -4,6 +4,11 @@ use mpi
 use settings
 implicit none
 
+! Commicator identifiers (color)
+integer :: sub_comm
+integer :: color
+integer, parameter :: MASTER = 0
+integer, parameter :: SLAVE = 1
 
 ! Data structures
 type :: mesh_t
