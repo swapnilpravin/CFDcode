@@ -1,20 +1,23 @@
 program main
 
 	use mpi
+	use mpi_vars
 
 	implicit none
 
-	integer :: ierr, Nproc, id, color
+	integer :: ierr!, Nproc, id, color
 
-	integer, parameter :: COLOR_MASTER = 0
-	integer, parameter :: COLOR_SLAVE = 1
+	!integer, parameter :: COLOR_MASTER = 0
+	!integer, parameter :: COLOR_SLAVE = 1
 
 	! communicator
-	integer :: sub_comm
+	!integer :: sub_comm
 
-	integer :: sub_size, sub_id 
+	!integer :: sub_size, sub_id 
 
 	call mpi_init(ierr)
+
+	call set_mpi_vars()
 
 	! Plan:
 	!
@@ -24,22 +27,32 @@ program main
 	! possibly, use one communicator as master, use it for graphical display
 	! and use the other comm for computing
 
-	call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-	call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+	!call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+	!call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
 
 	! assign color
-	if (id==0) then
-		color = COLOR_MASTER
+	!if (id==0) then
+	!	color = COLOR_MASTER
+	!else
+	!	color = COLOR_SLAVE
+	!end if
+
+	!call mpi_comm_split(MPI_COMM_WORLD, color, id, sub_comm, ierr)
+
+	!call mpi_comm_rank(sub_comm, sub_id, ierr)
+	!call mpi_comm_size(sub_comm, sub_size, ierr)
+
+	!print*, 'world rank/size', id, Nproc, 'sub_comm rank/size', sub_id, sub_size
+
+	if (color == MASTER) then
+		print*, 'master'
 	else
-		color = COLOR_SLAVE
+		print*, 'slave'
 	end if
 
-	call mpi_comm_split(MPI_COMM_WORLD, color, id, sub_comm, ierr)
+	print*, color
 
-	call mpi_comm_rank(sub_comm, sub_id, ierr)
-	call mpi_comm_size(sub_comm, sub_size, ierr)
-
-	print*, 'world rank/size', id, Nproc, 'sub_comm rank/size', sub_id, sub_size
+	!print*, 'This is comm ', color
 
 	call mpi_finalize(ierr)
 

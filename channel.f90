@@ -1,4 +1,5 @@
 subroutine channel()
+	use mpi_vars
     use settings
     use partitioner
 	use io
@@ -19,13 +20,14 @@ subroutine channel()
 
 	integer :: i, j
 
-    integer :: id, Nproc, ierr
+    !integer :: id, Nproc, ierr
+	integer :: ierr
 
     ! for io
     double precision :: Umax, Pmax, Umax_loc, Pmax_loc
 
-    call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-    call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+    !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+    !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
 
     
 	! Initialize Flow Variables

@@ -1,14 +1,9 @@
 module partitioner 
 
 use mpi
+use mpi_vars
 use settings
 implicit none
-
-! Commicator identifiers (color)
-integer :: sub_comm
-integer :: color
-integer, parameter :: MASTER = 0
-integer, parameter :: SLAVE = 1
 
 ! Data structures
 type :: mesh_t
@@ -57,10 +52,10 @@ contains
 
 subroutine setPartitions()
 
-    integer :: Nproc, id, ierr
+    !integer :: Nproc, id, ierr
 
-    call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
-    call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+    !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+    !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
     
 
     m = Nx/Nproc

@@ -1,4 +1,6 @@
 module boundaryConditions
+
+use mpi_vars
 use settings
 use partitioner
 use communicator
@@ -13,10 +15,10 @@ contains
 		
 		double precision, dimension(ny,1:m) :: r
 		
-		integer :: id, Nproc, ierr
+		!integer :: id, Nproc, ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+        !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
     
 
 		u = U0
@@ -43,10 +45,10 @@ contains
     subroutine setPressureBC_MPI(P)
         double precision, dimension(ny,0:m+1) :: P
 
-        integer :: id, Nproc, ierr
+        !integer :: id, Nproc, ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+        !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
     
         ! dP/dy = 0 at y=0,Ly (including edge nodes)
 		P(1,:) = P(2,:)
@@ -81,10 +83,10 @@ contains
     subroutine setToZero(u)
         double precision, dimension(ny,0:m+1) :: u
 
-        integer :: id, Nproc, ierr
+        !integer :: id, Nproc, ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)      
+        !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)      
 
         u(1,:) = 0
         u(ny,:) = 0
@@ -98,10 +100,10 @@ contains
     subroutine setUCavity(u)
         double precision, dimension(ny,0:m+1) :: u
 
-        integer :: id, Nproc, ierr
+        !integer :: id, Nproc, ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)      
+        !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)      
 
         u(1,:) = 0
         u(ny,:) = U0

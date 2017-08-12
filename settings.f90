@@ -1,7 +1,8 @@
 module settings
 
 use mpi
-use partitioner, only : sub_comm, color, MASTER, SLAVE
+use mpi_vars
+!use partitioner, only : sub_comm, color, MASTER, SLAVE
 
     implicit none
     
@@ -28,11 +29,13 @@ use partitioner, only : sub_comm, color, MASTER, SLAVE
 	        character(len=*) :: filename
 	        character(len=30) :: temp
 
-            integer :: id, Nproc, ierr
+            !integer :: id, Nproc, ierr
+			integer :: ierr
 
             !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
 
-            if (color == MASTER) then
+            !if (color == MASTER) then
+            if (id == 0) then
 	        
                 open(unit=10,file=filename,status='old',action='read')
                 
@@ -60,26 +63,26 @@ use partitioner, only : sub_comm, color, MASTER, SLAVE
             end if
 
             ! broadcast to all
-            call mpi_bcast(Lx,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(Ly,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(dx,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(dy,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(dt,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(nt,1,MPI_INTEGER,0,sub_comm,ierr)
-            call mpi_bcast(nit,1,MPI_INTEGER,0,sub_comm,ierr)
-            call mpi_bcast(rho,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(nu,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(omega_P,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(omega_U,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(omega_V,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(tol,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(U0,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(nLog,1,MPI_INTEGER,0,sub_comm,ierr)
-            call mpi_bcast(nWrite,1,MPI_INTEGER,0,sub_comm,ierr)
-            call mpi_bcast(RADIUS,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
-            call mpi_bcast(N_IBpoints,1,MPI_INTEGER,0,sub_comm,ierr)
+            call mpi_bcast(Lx,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(Ly,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(dx,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(dy,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(dt,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(nt,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(nit,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(rho,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(nu,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(omega_P,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(omega_U,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(omega_V,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(tol,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(U0,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(nLog,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(nWrite,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(RADIUS,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call mpi_bcast(N_IBpoints,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
-            !call mpi_barrier(sub_comm,ierr)
+            !call mpi_barrier(MPI_COMM_WORLD,ierr)
 
 			nx = floor(Lx/dx)
 			ny = floor(Ly/dy)
@@ -88,9 +91,9 @@ use partitioner, only : sub_comm, color, MASTER, SLAVE
 			
 			mu = nu*rho
 
-			call mpi_bcast(nx,1,MPI_INTEGER,0,sub_comm,ierr)
-			call mpi_bcast(ny,1,MPI_INTEGER,0,sub_comm,ierr)
-			call mpi_bcast(mu,1,MPI_DOUBLE_PRECISION,0,sub_comm,ierr)
+			call mpi_bcast(nx,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+			call mpi_bcast(ny,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+			call mpi_bcast(mu,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 			
             
         end subroutine setup

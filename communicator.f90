@@ -1,6 +1,7 @@
 module communicator
 
 use mpi
+use mpi_vars
 use settings, only: ny
 use partitioner, only: m
 
@@ -11,7 +12,8 @@ contains
 subroutine communicate(P)
     implicit none
     double precision, dimension(ny,0:m+1) :: P
-    integer :: id, Nproc, ierr
+    !integer :: id, Nproc, ierr
+	integer :: ierr
     integer :: n        ! size of data to be send/received
     integer :: left_flap_tag, right_flap_tag ! mpi tags for data meant for right and left ghost flaps on each processor
 
@@ -22,8 +24,8 @@ subroutine communicate(P)
 
     !print*, n
 
-    call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-    call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+    !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+    !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
 
     call mpi_send(P(:,m),n,MPI_DOUBLE_PRECISION,mod(id+1,Nproc),left_flap_tag,MPI_COMM_WORLD,ierr)
     if (id /= 0) call mpi_send(P(:,1),n,MPI_DOUBLE_PRECISION,id-1,right_flap_tag,MPI_COMM_WORLD,ierr)

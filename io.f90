@@ -1,6 +1,7 @@
 module io
 
 use mpi
+use mpi_vars
 use settings, only: nx, ny, Lx, Ly, dt
 use partitioner, only: mesh, m
 implicit none
@@ -85,10 +86,11 @@ contains
 		integer i,j
 		character(30) :: filename
 
-        integer :: id, Nproc, ierr
+        !integer :: id, Nproc, ierr
+		integer :: ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
-        call mpi_comm_size(MPI_COMM_WORLD,Nproc,ierr)
+        !call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD,Nproc,ierr)
 	
 		imax = ny; jmax=nx
 
@@ -166,9 +168,10 @@ contains
 
 		character(30) :: filename
 
-        integer :: id,Nproc,ierr
+        !integer :: id,Nproc,ierr
+		integer :: ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
+        !call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
 
         ! write BOV header file
 

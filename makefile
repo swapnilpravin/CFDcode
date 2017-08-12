@@ -1,4 +1,4 @@
-objects = settings.o partitioner.o io.o communicator.o IBM.o schemes.o boundaryConditions.o solver.o channel.o main.o 
+objects = mpi_vars.o settings.o partitioner.o io.o communicator.o IBM.o schemes.o boundaryConditions.o solver.o channel.o main.o 
 
 
 FC = mpif90
@@ -12,6 +12,9 @@ FFLAGS = -ffree-line-length-none -O3 -w
 
 channel: $(objects)
 	$(FC) $(FFLAGS) -o channel $(objects)
+
+mpi_vars.o: mpi_vars.f90
+	$(FC) $(FFLAGS) -c mpi_vars.f90
 
 settings.o : settings.f90
 	$(FC) $(FFLAGS) -c settings.f90
@@ -47,7 +50,7 @@ main.o : main.f90
 # 	ifort -o platelet_count.exe platelet_count.f90
 
 clean:
-	rm *.o *.mod *.exe *.out *.dat *.plt *.tec *~ *pbs.e* *pbs_run.o* *pbs_run.e* core.*
+	rm *.o *.mod *.exe *.out *.dat *.plt *.tec *~ *pbs.e* *pbs_run.o* *pbs_run.e* core.* channel
 
 clean-data:
 	rm *.tec 

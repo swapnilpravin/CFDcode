@@ -1,6 +1,7 @@
 module solver
 
 use mpi
+use mpi_vars
 use schemes
 use boundaryConditions
 use communicator
@@ -104,10 +105,11 @@ contains
         double precision :: alpha, beta, omega
 
 
-        integer :: id, Nproc, ierr
+        !integer :: id, Nproc, ierr
+		integer :: ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+        !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
 
 		!call setPressureBC_MPI(X)
         !call communicate(X)
@@ -232,10 +234,10 @@ contains
         double precision, dimension(ny,0:m+1) :: AX
         double precision :: ap, ae, aw, an, as
 
-        integer :: id, Nproc, ierr
+        !integer :: id, Nproc, ierr
 
-        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+        !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
 
     
         ap = 2/dx**2 + 2/dy**2
@@ -306,10 +308,10 @@ contains
 		double precision, dimension(ny,1:m) :: E_U, E_V
 		double precision :: E_rms_U, E_rms_V, E_sqr_loc_U, E_sqr_loc_V, E_sqr_U, E_sqr_V
         integer :: NITS_final
-		integer :: i, n, Nproc, ierr, id
+		integer :: i, n, ierr
 
-		call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
-        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
+		!call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        !call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
 		
 		
 		n = ny*nx
