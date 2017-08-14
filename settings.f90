@@ -2,7 +2,6 @@ module settings
 
 use mpi
 use mpi_vars
-!use partitioner, only : sub_comm, color, MASTER, SLAVE
 
     implicit none
     
@@ -34,8 +33,8 @@ use mpi_vars
 
             !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
 
-            !if (color == MASTER) then
-            if (id == 0) then
+            if (color == MASTER) then
+            !if (id == 0) then
 	        
                 open(unit=10,file=filename,status='old',action='read')
                 

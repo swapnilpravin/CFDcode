@@ -29,19 +29,6 @@ program main
         call exit()
     end if
 
-	! assign colors for master and slave comms
-	!if (id == 0) then
-	!	color = MASTER
-	!else
-	!	color = SLAVE
-	!end if
-
-	! create new communicators
-	!call mpi_comm_split(MPI_COMM_WORLD, color, id, sub_comm, ierr)
-
-	!call mpi_comm_rank(sub_comm, sub_id, ierr)
-	!call mpi_comm_size(sub_comm, sub_size, ierr)
-
 	call setup('setup.txt')
 
 	!if (color == MASTER) print*, 'SETUP DONE'
@@ -50,13 +37,10 @@ program main
     !call mpi_barrier(MPI_COMM_WORLD,ierr)
 
     if (color == MASTER) then
-    !if (id == 0) then
         call printHeader()
     end if
 
-	!print*, 'Comm color is: ', color
-
-    call setPartitions()
+	if (color == SLAVE) call setPartitions()
 	
 	call channel()
 

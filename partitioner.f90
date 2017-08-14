@@ -58,12 +58,20 @@ subroutine setPartitions()
     !call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
     
 
-    m = Nx/Nproc
-    if (id<(Nx-m*Nproc)) then
-        iStartx = id*(m+1)+1
+    !m = Nx/Nproc
+    !if (id<(Nx-m*Nproc)) then
+    !    iStartx = id*(m+1)+1
+    !    m = m+1
+    !else
+    !    iStartx = id*m + (Nx-m*Nproc) +1
+    !end if
+	
+	m = Nx/sub_size
+    if (sub_id<(Nx-m*sub_size)) then
+        iStartx = sub_id*(m+1)+1
         m = m+1
     else
-        iStartx = id*m + (Nx-m*Nproc) +1
+        iStartx = sub_id*m + (Nx-m*sub_size) +1
     end if
 
     allocate(mesh%x(Ny,m))
