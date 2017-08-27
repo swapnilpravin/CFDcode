@@ -36,9 +36,7 @@ program main
 
     !call mpi_barrier(MPI_COMM_WORLD,ierr)
 
-    if (color == MASTER) then
-        call printHeader()
-    end if
+    if (color == MASTER) call printHeader()
 
 	if (color == SLAVE) call setPartitions()
 	

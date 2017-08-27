@@ -101,7 +101,7 @@ subroutine setPartitions()
 	allocate(IBMesh%X_eq(N_IBpoints))
 
 
-    if (id==0) then
+    if (color == MASTER) then
         write(*,'(A,I0,A)') 'Memory allocated on ', Nproc, ' processors'
     end if
 
