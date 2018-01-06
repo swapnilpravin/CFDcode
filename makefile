@@ -47,7 +47,7 @@ main.o : main.f90
 # 	ifort -o platelet_count.exe platelet_count.f90
 
 clean:
-	rm *.o *.mod *.exe *.out *.dat *.plt *.tec *~ *pbs.e* *pbs_run.o* *pbs_run.e* core.*
+	rm *.o *.mod *.exe *.out *.dat *.plt *.tec *~ *pbs.e* *pbs_run.o* *pbs_run.e* core.* channel
 
 clean-data:
 	rm *.tec 

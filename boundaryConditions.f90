@@ -19,7 +19,8 @@ contains
         call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
     
 
-		u = U0
+		!u = U0
+		u = 0
 		v = 0
         p = 0
 
@@ -57,8 +58,9 @@ contains
 		!P(nz,:,:) = P(nz-1,:,:)
 		
         ! dP/dx = 0 at x=0,Lx (including edge nodes, for cavity validation case)
-        !if (id==0)          P(:,1) = P(:,2)
-        !if (id==Nproc-1)    P(:,m) = P(:,m-1)
+		! This BC applies here for the oscilating IBM element within fixed walls
+        if (id==0)          P(:,1) = P(:,2)
+        if (id==Nproc-1)    P(:,m) = P(:,m-1)
 
 
     end subroutine setPressureBC_MPI
@@ -90,8 +92,9 @@ contains
         u(ny,:) = 0
 
         ! for 2D cavity
-        !if(id==0)       u(:,1) = 0
-        !if(id==Nproc-1) u(:,m) = 0
+		! Applies for the oscillating IBM element case
+        if(id==0)       u(:,1) = 0
+        if(id==Nproc-1) u(:,m) = 0
 
     end subroutine setToZero
 

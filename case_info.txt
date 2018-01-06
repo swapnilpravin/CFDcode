@@ -1,0 +1,3 @@
+Oscilating roughness element:
+----------------------------
+In this case, all the walls are fixed and the IBM element oscillates with a specified function (sine or trapezoid)

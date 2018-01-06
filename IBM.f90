@@ -28,6 +28,13 @@ contains
 		Hy = -eta*v(:,1:m)/(dt)
 
 	end subroutine IBMforceCircle
+
+	subroutine IBMforceOscillatingCircle
+		! circle oscillating in the y direction
+		! create a set of points on the circle to be tracked as it moves, recalculate eta 
+		! at each step, and set force Hx, Hy using formula that takes circle speed into account
+
+	end subroutine IBMforceOscillatingCircle
 	
 
 end module IBM
