@@ -1,3 +1,6 @@
+channel
+logfile
+
 .DS_Store
 Thumbs.db
 *.o
@@ -5,4 +8,7 @@ Thumbs.db
 *.tec
 *.mod
 *~
-
+*.mpeg
+*.mpg
+*.avi
+*.pvsm
