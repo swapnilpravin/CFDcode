@@ -363,6 +363,8 @@ contains
 			u_star = u_star + omega_U * (u_star_new - u_star)
 			v_star = v_star + omega_V * (v_star_new - v_star)
 
+			call setVelocityBC_MPI(u_star,v_star)
+
 			call communicate(u_star)
 			call communicate(v_star)
 

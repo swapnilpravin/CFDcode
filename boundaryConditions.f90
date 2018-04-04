@@ -98,6 +98,25 @@ contains
 
     end subroutine setToZero
 
+	subroutine setZeroGradient(u)
+        double precision, dimension(ny,0:m+1) :: u
+
+        integer :: id, Nproc, ierr
+
+        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)      
+
+		! Top and bottom walls
+        u(1,:) = u(2,:)
+        u(ny,:) = u(ny-1,:)
+
+        ! Left and right walls
+        if(id==0)       u(:,1) = u(:,2)
+        if(id==Nproc-1) u(:,m) = u(:,m-1)
+
+    end subroutine setZeroGradient
+
+
     subroutine setUCavity(u)
         double precision, dimension(ny,0:m+1) :: u
 

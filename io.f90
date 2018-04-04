@@ -451,5 +451,25 @@ contains
         print *, filename, " written to disk."
     end subroutine write2DArrayToFile
 
+	subroutine checkSolverError(Umax, Pmax)
+		
+		double precision :: Umax, Pmax
+		integer :: id, Nproc, ierr
+		
+		call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
+		call mpi_comm_size(MPI_COMM_WORLD,Nproc,ierr)
+
+		if (id==0) then
+		! NaN is not equal to anything, not even itself!
+			if (Umax /= Umax .or. Pmax /= Pmax) then
+				print*, ''
+				print*, 'Error: Solver generated NaNs'
+				print*, ''
+				call exit()
+			end if
+		end if
+	end subroutine checkSolverError
+
+
 
 end module io

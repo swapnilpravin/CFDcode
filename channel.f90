@@ -111,6 +111,8 @@ subroutine channel()
         call mpi_reduce(Pmax_loc,Pmax,1,MPI_DOUBLE_PRECISION,MPI_MAX,0,MPI_COMM_WORLD,ierr)
         !if(id==0) print*, 'reduction for io done'
 
+		call checkSolverError(Umax, Pmax)
+
         if (id==0) then       
             if (mod(i,nLog)==0) then
                 call writeLogToTerminal_MPI(i, &
