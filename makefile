@@ -1,13 +1,13 @@
 objects = settings.o partitioner.o io.o communicator.o IBM.o schemes.o boundaryConditions.o solver.o channel.o main.o 
 
-
+#FC = ~/apps/tools/openmpi/bin/mpif90
 FC = mpif90
 #FC = $(HOME)/apps/bin/mpif90
 FFLAGS = -ffree-line-length-none -O3 -w
 # for profiling: -pg 
 #
-# intel: (for profiling: -pg)
-# FFLAGS = -no-wrap-margin -pg -check bounds
+# intel: (for profiling: -pg) -check bounds
+#FFLAGS = -no-wrap-margin -O3
 
 
 channel: $(objects)

@@ -61,7 +61,8 @@ subroutine channel()
 		
         ! Calculate force for IBM
 		!call IBMForceCircle(forces%Hx,forces%Hy,field%u,field%v,mesh%x,mesh%y)
-		call IBMForceOscillatingCircle(forces%Hx,forces%Hy,field%u,field%v,mesh%x,mesh%y,i)
+		!call IBMForceOscillatingCircle(forces%Hx,forces%Hy,field%u,field%v,mesh%x,mesh%y,i)
+		call IBMForceOscillatingSteps(forces%Hx,forces%Hy,field%u,field%v,mesh%x,mesh%y,i)
 
 		! Total body force
 		forces%Bx = forces%F + forces%Hx
