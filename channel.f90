@@ -29,7 +29,7 @@ subroutine channel()
 
     
 	! Initialize Flow Variables
-	field%u=0; field%v=0; field%P=0
+	field%u=0; field%v=0; field%P=0; field%eta=0
 	!field%u_last=0; field%v_last=0;
 	field%u_star=0; field%v_star=0
 	field%u_star2=0; field%v_star2=0
@@ -55,7 +55,7 @@ subroutine channel()
 	![u,v] = setVelocityBC1(u,v,dx,dy,dt,nu);
 
 	! write data before starting simulation
-	call writeToTecplot2D_MPI(mesh%x,mesh%y,field%u,field%v,field%P,0)
+	call writeToTecplot2D_MPI(mesh%x,mesh%y,field%u,field%v,field%P,field%eta,0)
 	
 	do i=1,nt
 		
@@ -130,7 +130,7 @@ subroutine channel()
         end if
 
         if (mod(i,nWrite)==0) then
-            call writeToTecplot2D_MPI(mesh%x,mesh%y,field%u,field%v,field%P,i)
+            call writeToTecplot2D_MPI(mesh%x,mesh%y,field%u,field%v,field%P,field%eta,i)
         end if
 
         call mpi_barrier(MPI_COMM_WORLD,ierr)

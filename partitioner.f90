@@ -11,7 +11,7 @@ type :: mesh_t
 end type mesh_t
 
 type :: field_t
-    double precision, dimension(:,:), allocatable :: u, v, P
+    double precision, dimension(:,:), allocatable :: u, v, P, eta
     double precision, dimension(:,:), allocatable :: u_last, v_last
     double precision, dimension(:,:), allocatable :: u_star, v_star
     double precision, dimension(:,:), allocatable :: u_star2, v_star2
@@ -68,6 +68,8 @@ subroutine setPartitions()
 
     allocate(mesh%x(Ny,m))
     allocate(mesh%y(Ny,m))
+
+	allocate(field%eta(Ny,m))
 
     allocate(field%u(Ny,0:m+1))
     allocate(field%v(Ny,0:m+1))

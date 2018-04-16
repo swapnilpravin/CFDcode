@@ -1,8 +1,8 @@
 Lx,1.52
 Ly,0.1
-dx,0.005
-dy,0.005
-dt,0.01
+dx,0.002
+dy,0.002
+dt,0.005
 nt,1000
 nit,1000
 rho,850
@@ -13,6 +13,6 @@ omega_V,0.7
 tol,1e-6
 U0,0.03
 nLog,10
-nWrite,50
+nWrite,10
 RADIUS,0.1
 N_IBpoints,10

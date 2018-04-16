@@ -73,14 +73,14 @@ contains
     !---------------------------------------------
     ! writeToTecplot2D_MPI
     !---------------------------------------------
-    subroutine writeToTecplot2D_MPI(x,y,u,v,P,timestamp)
+    subroutine writeToTecplot2D_MPI(x,y,u,v,P,eta,timestamp)
 		
-		double precision, dimension(ny,1:m) :: x,y
+		double precision, dimension(ny,1:m) :: x,y,eta
 		double precision, dimension(ny,0:m+1) :: u,v,P
 		integer :: timestamp
 
 		integer :: imax, jmax
-		double precision, dimension(:,:), allocatable ::x_all, y_all, u_all, v_all, P_all ! all gathered data (only at root)
+		double precision, dimension(:,:), allocatable ::x_all, y_all, eta_all, u_all, v_all, P_all ! all gathered data (only at root)
         integer, dimension(:), allocatable :: recvcounts, displs ! only at root
 		integer i,j
 		character(30) :: filename
@@ -95,6 +95,7 @@ contains
         if (id==0) then
             allocate(x_all(ny,nx))
             allocate(y_all(ny,nx))
+            allocate(eta_all(ny,nx))
             allocate(u_all(ny,nx))
             allocate(v_all(ny,nx))
             allocate(P_all(ny,nx))
@@ -119,6 +120,7 @@ contains
 
         call mpi_gatherv(x,ny*m,MPI_DOUBLE_PRECISION,x_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call mpi_gatherv(y,ny*m,MPI_DOUBLE_PRECISION,y_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call mpi_gatherv(eta,ny*m,MPI_DOUBLE_PRECISION,eta_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call mpi_gatherv(u(:,1:m),ny*m,MPI_DOUBLE_PRECISION,u_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call mpi_gatherv(v(:,1:m),ny*m,MPI_DOUBLE_PRECISION,v_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call mpi_gatherv(P(:,1:m),ny*m,MPI_DOUBLE_PRECISION,P_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
@@ -131,12 +133,13 @@ contains
             write(filename,100) 'data_',timestamp,'.tec'
         
             open(unit=10,file=filename,status='replace',action='write')
-            write(10,*) 'VARIABLES = "X","Y","U","V","P"'
+            write(10,*) 'VARIABLES = "X","Y","eta","U","V","P"'
             write(10,*) 'ZONE DATAPACKING=BLOCK, I=', imax, ', J=', jmax
-            write(10,*) 'STRANDID=1  SOLUTIONTIME=',timestamp*dt
+            write(10,*) 'STRANDID=1, SOLUTIONTIME=',timestamp*dt
             
             write(10,*) x_all
             write(10,*) y_all
+            write(10,*) eta_all
             write(10,*) u_all
             write(10,*) v_all
             write(10,*) P_all
