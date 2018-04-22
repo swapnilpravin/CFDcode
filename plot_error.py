@@ -1,6 +1,60 @@
-''' parse the log file and plot error at each timestep '''
+''' parse the log file and plot error/out-data for each timestep '''
 
 import sys
+
+def pick_number(line):
+	words = line.split()
+	#print(len(words))
+	#print(words)
+	for w in words:
+		#print(w)
+		if is_number(w):
+			#print(w)
+			return(float(w))
+			break
+
+def pick_varname(line):
+	words = line.split()
+	for w in words:
+		w = w.strip('|')
+		#print(w)
+		if w.isalpha():
+			#print(w)
+			return w
+			break
+
+
+def is_number(s):
+	try:
+		float(s)
+		return True
+	except ValueError:
+		return False
+
+def num_out_vars(logfile):
+	# find number of output variables in logfile
+	f = open(logfile)
+	n=0
+	
+	for line in f:
+		if 'Timestep =' in line:
+			for i in range(6):
+				f.next()
+			while True:
+				line = f.next()
+				if '------------------' in line:
+					break
+				else:
+					n = n+1
+			break
+	f.close()
+	return n
+
+
+class out_var:
+	def __init__(self):
+		self.name = ''
+		self.data = []
 
 def main():
 
@@ -19,6 +73,9 @@ def main():
 		logfile = arg1
 
 	#print(logfile)
+
+	num_vars = num_out_vars(logfile)
+	#print(num_vars)
 
 	# imports
 	try:
@@ -42,9 +99,11 @@ def main():
 	V_err = []
 	P_itr = []
 	U_itr = []
+	Vars = [out_var() for i in range(num_vars)]
+
 
 	# read until you find: Timestep =
-
+	'''
 	for line in f:
 		if 'Timestep =' in line:
 			timestep.append(int(line.split()[3]))
@@ -59,6 +118,34 @@ def main():
 			P_itr.append(int(line.split()[3]))
 		if 'Velocity solver iteration' in line:
 			U_itr.append(int(line.split()[3]))
+	'''
+
+	for line in f:
+		if 'Timestep =' in line:
+			timestep.append(int(line.split()[3]))
+			f.next()	# skip ------ line
+			# read next five lined for log data
+			line = f.next()
+			P_err.append(pick_number(line))
+			line = f.next()
+			P_itr.append(pick_number(line))
+			line = f.next()
+			U_err.append(pick_number(line))
+			line = f.next()
+			V_err.append(pick_number(line))
+			line = f.next()
+			U_itr.append(pick_number(line))
+
+			for i in range(num_vars):
+				line = f.next()
+				#print(pick_varname(line))
+				Vars[i].name = pick_varname(line)
+				Vars[i].data.append(pick_number(line))
+				
+
+
+
+
 
 	f.close()
 
@@ -66,6 +153,7 @@ def main():
 
 	gs = gridspec.GridSpec(2,1,height_ratios=[2,1])
 
+	plt.figure()
 	plt.subplot(gs[0])
 	plt.plot(timestep, P_err, label='Pressure error')
 	plt.plot(timestep, U_err, label='Velocity U error')
@@ -82,6 +170,14 @@ def main():
 	plt.xlabel('Timesteps')
 	plt.ylabel('Solver iterations')
 	plt.legend()
+
+	plt.figure()
+	gs2 = gridspec.GridSpec(num_vars,1)
+	for i in range(num_vars):
+		plt.subplot(gs2[i])
+		plt.plot(timestep, Vars[i].data, label=Vars[i].name)
+		plt.legend()
+
 
 	plt.show()
 
