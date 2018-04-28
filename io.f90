@@ -501,7 +501,7 @@ contains
 			end if
 		
 			if (id==0) then
-				call mpi_recv(mon_data(i,3),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,ierr)
+				call mpi_recv(mon_data(i,3),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,MPI_STATUS_IGNORE,ierr)
 				print*, 'mon point', i, 'recieved at', id
 			end if
 		end do
