@@ -23,6 +23,7 @@ subroutine channel()
 
     ! for io
     double precision :: Umax, Pmax, Umax_loc, Pmax_loc
+	double precision, dimension(n_mon,3) :: mon_data	! u,v,p data, one monitor point per row
 
     call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
     call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)
@@ -114,8 +115,9 @@ subroutine channel()
 
 		call checkSolverError(Umax, Pmax)
 
-        if (id==0) then       
-            if (mod(i,nLog)==0) then
+        if (mod(i,nLog)==0) then
+			call retrieveMonData(mon_data)
+			if (id==0) then       
                 call writeLogToTerminal_MPI(i, &
                 'Pressure error','double',E_P, &
                 'Pressure solver iterations','integer',dble(NITS_final_P), &
@@ -123,7 +125,9 @@ subroutine channel()
 				'Velocity V error','double',E_V, &
 				'Velocity solver iterations','integer',dble(NITS_final_U), &
 				'Umax','double',Umax, &
-                'Pmax','double',Pmax )
+                'Pmax','double',Pmax, &
+				'Point1_u_mag','double',sqrt(mon_data(1,1)**2+mon_data(1,2)**2), &
+				'Point2_u_mag','double',sqrt(mon_data(2,1)**2+mon_data(2,2)**2)	)
             end if
             
             

@@ -1,8 +1,8 @@
 module io
 
 use mpi
-use settings, only: nx, ny, Lx, Ly, dt
-use partitioner, only: mesh, m
+use settings, only: nx, ny, Lx, Ly, dt, n_mon, x_mon, y_mon
+use partitioner, only: mesh, m, field
 implicit none
 
 contains
@@ -473,6 +473,43 @@ contains
 		end if
 	end subroutine checkSolverError
 
+	subroutine retrieveMonData(mon_data)
+		integer :: i
+		integer :: id, Nproc, ierr
+		integer :: nx_loc
+		integer :: i_x, i_y
+
+		double precision :: x_min, x_max
+		double precision, dimension(3) :: mon_data_loc	! u,v,p
+		double precision, dimension(n_mon,3) :: mon_data	! u,v,p per row
+
+		call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+
+		x_min = minval(mesh%x)
+		x_max = maxval(mesh%x)
+		nx_loc = size(mesh%x,2)
+	
+		do i=1,n_mon 
+			if (x_mon(i)>=x_min .and. x_mon(i)<=x_max) then
+				i_x = int(nx_loc*(x_mon(i)-x_min)/(x_max-x_min))
+				i_y = int(ny*y_mon(i)/Ly)
+				mon_data_loc = (/ field%u(i_y,i_x), field%v(i_y,i_x), field%p(i_y,i_x) /)
+				print*, mon_data_loc
+			
+				call mpi_send(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,ierr)
+				print*, 'mon point', i, 'sent from', id
+			end if
+		
+			if (id==0) then
+				call mpi_recv(mon_data(i,3),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,ierr)
+				print*, 'mon point', i, 'recieved at', id
+			end if
+		end do
+	
+		call mpi_barrier(MPI_COMM_WORLD,ierr)
+		call mpi_bcast(mon_data,n_mon*3,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+
+	end subroutine retrieveMonData
 
 
 end module io
