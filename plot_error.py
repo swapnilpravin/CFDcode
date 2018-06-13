@@ -156,7 +156,7 @@ def main():
 
 	gs = gridspec.GridSpec(2,1,height_ratios=[2,1])
 
-	plt.figure()
+	plt.figure('Run monitor')
 	plt.subplot(gs[0])
 	plt.plot(timestep, P_err, label='P')
 	plt.plot(timestep, U_err, label='U')
@@ -174,7 +174,7 @@ def main():
 	plt.ylabel('Solver iterations')
 	plt.legend(loc=9, bbox_to_anchor=(0.9, 1.1))
 
-	plt.figure()
+	plt.figure('Variables plot')
 	gs2 = gridspec.GridSpec(num_vars,1)
 	for i in range(num_vars):
 		plt.subplot(gs2[i])

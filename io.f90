@@ -9,9 +9,14 @@ contains
 	subroutine printHeader
 	
 		character(len=100), parameter :: hline = '-----------------------------------------------------------------'
+		integer,dimension(8) :: values
+
+		call date_and_time(VALUES=values)
 		
 		print*, hline
 		print*, 'CFD Simulation Program'
+		print 150, 'Start time: ',values(1),'/',values(2),'/',values(3),' ',values(5),':',values(6),':', values(7) 
+		150 format(A,I4,A,I2.2,A,I2.2,A,I2.2,A,I2.2,A,I2.2)
 		print*, hline
 
 		100 format(A20,'(',I0, ' x ',I0, ')')
@@ -483,8 +488,6 @@ contains
 		double precision, dimension(3) :: mon_data_loc	! u,v,p
 		double precision, dimension(n_mon,3) :: mon_data	! u,v,p per row
 
-		integer :: mpi_send_handle
-		integer, dimension(n_mon) :: mpi_recv_handle
 		integer, dimension(MPI_STATUS_SIZE) :: status
 
 		call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
@@ -501,10 +504,7 @@ contains
 				mon_data_loc = (/ field%u(i_y,i_x), field%v(i_y,i_x), field%p(i_y,i_x) /)
 				!print*, mon_data_loc
 			
-				!if (id==0) then
-					!call mpi_isend(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,mpi_send_handle,ierr)
-				!else
-					call mpi_send(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,ierr)
+				call mpi_send(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,ierr)
 				!end if
 				!print*, 'mon point', i, 'sent from', id
 			end if
@@ -521,11 +521,7 @@ contains
 					mon_data_loc = (/ field%u(i_y,i_x), field%v(i_y,i_x), field%p(i_y,i_x) /)
 					mon_data(i,:) = mon_data_loc
 				else
-					!call mpi_irecv(mon_data(i,:),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,mpi_recv_handle(i),ierr)
 					call mpi_recv(mon_data(i,:),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,status,ierr)
-				!print*, 'mon point', i, 'recieved at', id
-				!print*, ierr
-				!call mpi_wait(mpi_recv_handle(i), status, ierr)
 				end if
 			end do
 		end if
