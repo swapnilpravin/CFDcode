@@ -483,30 +483,56 @@ contains
 		double precision, dimension(3) :: mon_data_loc	! u,v,p
 		double precision, dimension(n_mon,3) :: mon_data	! u,v,p per row
 
+		integer :: mpi_send_handle
+		integer, dimension(n_mon) :: mpi_recv_handle
+		integer, dimension(MPI_STATUS_SIZE) :: status
+
 		call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
 
 		x_min = minval(mesh%x)
 		x_max = maxval(mesh%x)
 		nx_loc = size(mesh%x,2)
-	
+
+		if (id/=0) then	
 		do i=1,n_mon 
 			if (x_mon(i)>=x_min .and. x_mon(i)<=x_max) then
 				i_x = int(nx_loc*(x_mon(i)-x_min)/(x_max-x_min))
 				i_y = int(ny*y_mon(i)/Ly)
 				mon_data_loc = (/ field%u(i_y,i_x), field%v(i_y,i_x), field%p(i_y,i_x) /)
-				print*, mon_data_loc
+				!print*, mon_data_loc
 			
-				call mpi_send(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,ierr)
-				print*, 'mon point', i, 'sent from', id
-			end if
-		
-			if (id==0) then
-				call mpi_recv(mon_data(i,3),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,MPI_STATUS_IGNORE,ierr)
-				print*, 'mon point', i, 'recieved at', id
+				!if (id==0) then
+					!call mpi_isend(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,mpi_send_handle,ierr)
+				!else
+					call mpi_send(mon_data_loc,3,MPI_DOUBLE_PRECISION,0,100+i,MPI_COMM_WORLD,ierr)
+				!end if
+				!print*, 'mon point', i, 'sent from', id
 			end if
 		end do
+		end if
+
+		!call mpi_barrier(MPI_COMM_WORLD,ierr)
+
+		if (id==0) then
+			do i=1,n_mon
+				if (x_mon(i)>=x_min .and. x_mon(i)<=x_max) then
+					i_x = int(nx_loc*(x_mon(i)-x_min)/(x_max-x_min))
+					i_y = int(ny*y_mon(i)/Ly)
+					mon_data_loc = (/ field%u(i_y,i_x), field%v(i_y,i_x), field%p(i_y,i_x) /)
+					mon_data(i,:) = mon_data_loc
+				else
+					!call mpi_irecv(mon_data(i,:),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,mpi_recv_handle(i),ierr)
+					call mpi_recv(mon_data(i,:),3,MPI_DOUBLE_PRECISION,MPI_ANY_SOURCE,100+i,MPI_COMM_WORLD,status,ierr)
+				!print*, 'mon point', i, 'recieved at', id
+				!print*, ierr
+				!call mpi_wait(mpi_recv_handle(i), status, ierr)
+				end if
+			end do
+		end if
+
+		!if (id==0) print*, mon_data
 	
-		call mpi_barrier(MPI_COMM_WORLD,ierr)
+		!call mpi_barrier(MPI_COMM_WORLD,ierr)
 		call mpi_bcast(mon_data,n_mon*3,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 
 	end subroutine retrieveMonData

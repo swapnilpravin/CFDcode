@@ -97,6 +97,7 @@ use mpi
 				open(unit=20,file='monitor.txt',status='old',action='read')
 				read (20,*) n_mon
 			end if
+			call mpi_barrier(MPI_COMM_WORLD, ierr)
 			call mpi_bcast(n_mon,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 			allocate(x_mon(n_mon))
 			allocate(y_mon(n_mon))
@@ -107,7 +108,7 @@ use mpi
 				end do
 				close(20)
 			end if
-			
+			call mpi_barrier(MPI_COMM_WORLD, ierr)
 			call mpi_bcast(x_mon,n_mon,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 			call mpi_bcast(y_mon,n_mon,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 

@@ -15,6 +15,8 @@ def pick_number(line):
 
 def pick_varname(line):
 	words = line.split()
+	return words[1].strip('|')
+	'''
 	for w in words:
 		w = w.strip('|')
 		#print(w)
@@ -22,6 +24,7 @@ def pick_varname(line):
 			#print(w)
 			return w
 			break
+	'''
 
 
 def is_number(s):
@@ -124,7 +127,7 @@ def main():
 		if 'Timestep =' in line:
 			timestep.append(int(line.split()[3]))
 			f.next()	# skip ------ line
-			# read next five lined for log data
+			# read next five lines for log data
 			line = f.next()
 			P_err.append(pick_number(line))
 			line = f.next()
@@ -155,28 +158,30 @@ def main():
 
 	plt.figure()
 	plt.subplot(gs[0])
-	plt.plot(timestep, P_err, label='Pressure error')
-	plt.plot(timestep, U_err, label='Velocity U error')
-	plt.plot(timestep, V_err, label='Velocity V error')
+	plt.plot(timestep, P_err, label='P')
+	plt.plot(timestep, U_err, label='U')
+	plt.plot(timestep, V_err, label='V')
 	plt.ylabel('Error')
-	plt.legend()
-	plt.title('Run monitor')
+	plt.legend(loc=9, bbox_to_anchor=(0.8, 1.2), ncol=3)
+	#plt.title('Run monitor')
 
 	bar_width = 3
 
 	plt.subplot(gs[1])
-	plt.bar(timestep, P_itr, bar_width, label='Pressure')
-	plt.bar(timestep+bar_width, U_itr, bar_width, label='Velocity')
-	plt.xlabel('Timesteps')
+	plt.bar(timestep, P_itr, bar_width, label='Pressure', color='b')
+	plt.bar(timestep+bar_width, U_itr, bar_width, label='Velocity', color='r')
+	plt.xlabel('Time step')
 	plt.ylabel('Solver iterations')
-	plt.legend()
+	plt.legend(loc=9, bbox_to_anchor=(0.9, 1.1))
 
 	plt.figure()
 	gs2 = gridspec.GridSpec(num_vars,1)
 	for i in range(num_vars):
 		plt.subplot(gs2[i])
 		plt.plot(timestep, Vars[i].data, label=Vars[i].name)
-		plt.legend()
+		plt.ylabel(Vars[i].name)
+	plt.xlabel('Time step')
+		#plt.legend()
 
 
 	plt.show()
