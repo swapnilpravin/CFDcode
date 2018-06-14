@@ -277,14 +277,15 @@ contains
 	V7_name,V7_type,V7, &
 	V8_name,V8_type,V8, &
 	V9_name,V9_type,V9, &
-    V10_name,V10_type,V10)
+    V10_name,V10_type,V10, &
+	V11_name,V11_type,V11)
 	
 	integer :: timestep
 
 	! (optional variables to write to terminal)
-	character(len=*),optional :: V1_name, V2_name, V3_name, V4_name, V5_name, V6_name, V7_name, V8_name, V9_name, V10_name
-	character(len=*),optional :: V1_type, V2_type, V3_type, V4_type, V5_type, V6_type, V7_type, V8_type, V9_type, V10_type ! must be 'integer' or 'double'
-	double precision, optional :: V1,V2,V3,V4,V5,V6,V7,V8,V9,V10
+	character(len=*),optional :: V1_name, V2_name, V3_name, V4_name, V5_name, V6_name, V7_name, V8_name, V9_name, V10_name, V11_name
+	character(len=*),optional :: V1_type, V2_type, V3_type, V4_type, V5_type, V6_type, V7_type, V8_type, V9_type, V10_type, V11_type ! must be 'integer' or 'double'
+	double precision, optional :: V1,V2,V3,V4,V5,V6,V7,V8,V9,V10,V11
 	
 	integer :: i
 	
@@ -394,6 +395,16 @@ contains
 		    print 101, '|',V10_name, '|',int(V10), '|'
         else if (V10_type .eq. 'double') then
 		    print 102, '|',V10_name, '|',V10, '|'
+        else
+            print *, error_msg
+        end if
+	end if
+
+	if (present(V11)) then
+        if (V11_type .eq. 'integer') then
+		    print 101, '|',V11_name, '|',int(V11), '|'
+        else if (V11_type .eq. 'double') then
+		    print 102, '|',V11_name, '|',V11, '|'
         else
             print *, error_msg
         end if
