@@ -6,4 +6,8 @@ Thumbs.db
 *.mod
 *~
 logfile
+*.mpg
+*.mpeg
+*.avi
+*.pvsm
 
