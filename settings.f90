@@ -130,8 +130,6 @@ use mpi
 			call mpi_barrier(MPI_COMM_WORLD, ierr)
 			call mpi_bcast(x_ib,n_ib,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 			call mpi_bcast(y_ib,n_ib,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-			
-			print*, 'proc ', id, ': ', y_ib
 
             
         end subroutine setup

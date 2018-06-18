@@ -133,7 +133,7 @@ contains
 			end do
 		end do
 
-		print*, count(field%eta==1)
+		!print*, count(field%eta==1)
 		
 		!where ((x-xc)**2 + (y-yc)**2 < RADIUS**2 ) eta=1
 
@@ -277,7 +277,7 @@ contains
 			! Check if the line segment from 'p' to 'extreme' intersects
 			! with the line segment from 'polygon[i]' to 'polygon[next]'
 			call doIntersect(polygon(i), polygon(next), p, extreme, temp1)
-			if (temp1 .eqv. .true.) then
+			if (temp1) then
 			
 				! If the point 'p' is colinear with line segment 'i-next',
 				! then check if it lies on segment. If it lies, return true,
@@ -291,6 +291,16 @@ contains
 					ans = temp3
 					return
 				end if
+				
+				! Check if the ray p-extreme passes through one of the vertices i or next.
+				! If the intersection point is a vertex of a tested polygon side, 
+				! then the intersection counts only if the second vertex of the side 
+				! lies below the ray. This is effectively equivalent to considering 
+				! vertices on the ray as lying slightly above the ray.
+				call onSegment(p, polygon(i), extreme, temp3)
+				if (temp3 .and. polygon(next)%y>p%y) cycle
+				call onSegment(p, polygon(next), extreme, temp3)
+				if (temp3 .and. polygon(i)%y>p%y) cycle
 
 				count = count + 1
 			end if

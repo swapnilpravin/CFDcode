@@ -55,5 +55,5 @@ clean-data:
 test.o: test.f90 
 	$(FC) $(FFLAGS) -c test.f90
 	
-test: test.o settings.o partitioner.o IBM.o
-	$(FC) $(FFLAGS) test.o settings.o partitioner.o IBM.o -o test
+test: settings.o partitioner.o IBM.o test.o 
+	$(FC) $(FFLAGS) settings.o partitioner.o IBM.o test.o -o test
