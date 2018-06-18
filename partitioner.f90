@@ -91,8 +91,8 @@ subroutine setPartitions()
 	allocate(forces%By(Ny,m))
 
 	! Immersed boundary mesh locations
-	allocate(IBMesh%X_k(N_IBpoints))
-	allocate(IBMesh%X_eq(N_IBpoints))
+	allocate(IBMesh%X_k(N_ib))
+	allocate(IBMesh%X_eq(N_ib))
 
 
     if (id==0) then

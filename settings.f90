@@ -18,7 +18,9 @@ use mpi
     double precision :: RADIUS	! for testing: circle radius
     
 
-    integer :: N_IBpoints
+	! IB points
+    integer :: n_ib
+	double precision, dimension(:), allocatable :: x_ib, y_ib
 
 	! Monitor points
 	integer :: n_mon
@@ -57,8 +59,6 @@ use mpi
                 read (10,*) temp, U0
                 read (10,*) temp, nLog
                 read (10,*) temp, nWrite
-                read (10,*) temp, RADIUS
-                read (10,*) temp, N_IBpoints
 
 			    close(10)
 
@@ -81,8 +81,6 @@ use mpi
             call mpi_bcast(U0,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
             call mpi_bcast(nLog,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
             call mpi_bcast(nWrite,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-            call mpi_bcast(RADIUS,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-            call mpi_bcast(N_IBpoints,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
             !call mpi_barrier(MPI_COMM_WORLD,ierr)
 
@@ -93,6 +91,7 @@ use mpi
 			
 			mu = nu*rho
 
+			! Read montor points from 'monitor.txt'
 			if (id==0) then
 				open(unit=20,file='monitor.txt',status='old',action='read')
 				read (20,*) n_mon
@@ -112,7 +111,28 @@ use mpi
 			call mpi_bcast(x_mon,n_mon,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 			call mpi_bcast(y_mon,n_mon,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 
+			! Read IB points from 'ib.txt'
+			if (id==0) then
+				open(unit=30,file='ib.txt',status='old',action='read')
+				read (30,*) n_ib
+			end if
+			call mpi_barrier(MPI_COMM_WORLD, ierr)
+			call mpi_bcast(n_ib,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+			allocate(x_ib(n_ib))
+			allocate(y_ib(n_ib))
+
+			if (id==0) then
+				do i=1,n_ib
+					read (30,*) x_ib(i), y_ib(i)
+				end do
+				close(30)
+			end if
+			call mpi_barrier(MPI_COMM_WORLD, ierr)
+			call mpi_bcast(x_ib,n_ib,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+			call mpi_bcast(y_ib,n_ib,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 			
+			print*, 'proc ', id, ': ', y_ib
+
             
         end subroutine setup
         

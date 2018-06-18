@@ -51,3 +51,9 @@ clean:
 
 clean-data:
 	rm *.tec 
+	
+test.o: test.f90 
+	$(FC) $(FFLAGS) -c test.f90
+	
+test: test.o settings.o partitioner.o IBM.o
+	$(FC) $(FFLAGS) test.o settings.o partitioner.o IBM.o -o test
