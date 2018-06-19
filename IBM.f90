@@ -104,22 +104,36 @@ contains
 	end subroutine IBMforceOscillatingSteps
 
 
-	subroutine IBMforcePolygon(Hx,Hy,u,v,x,y)
+	subroutine IBMforcePolygon(Hx,Hy,u,v,x,y,tstep)
 
 		!use settings, only: n_ib, x_ib, y_ib
 		implicit none
 
 		double precision, dimension(ny,m) :: Hx,Hy,x,y
 		double precision, dimension(ny,0:m+1) :: u,v
+		integer :: tstep	! time step
 
 		logical :: ans
 		type(point_t) :: p
 		type(point_t), dimension(n_ib) :: polygon
 
 		integer :: i,j,k
+		
+		double precision, parameter :: A = 0.033		! Oscillation amplitude
+		double precision, parameter :: T = 3.2		! Oscillation time period
+		
+		double precision, parameter :: omega = 2*pi/T
+		double precision, dimension(n_ib) :: x_ib_t, y_ib_t
+		double precision :: U_ib, V_ib
+		
+		x_ib_t = x_ib + A*sin(pi/2+omega*tstep*dt)
+		y_ib_t = y_ib
+		
+		U_ib = A*omega*cos(pi/2+omega*tstep*dt)
+		V_ib = 0
 
 		do k=1,n_ib
-			polygon(k) = point_t(x_ib(k), y_ib(k))
+			polygon(k) = point_t(x_ib_t(k), y_ib_t(k))
 		end do
 
 		field%eta = 0 !(Ny,m)
@@ -133,12 +147,8 @@ contains
 			end do
 		end do
 
-		!print*, count(field%eta==1)
-		
-		!where ((x-xc)**2 + (y-yc)**2 < RADIUS**2 ) eta=1
-
-		Hx = -field%eta*u(:,1:m)/(dt)
-		Hy = -field%eta*v(:,1:m)/(dt)
+		Hx = field%eta*(U_ib-u(:,1:m))/(dt)
+		Hy = field%eta*(V_ib-v(:,1:m))/(dt)
 
 	end subroutine IBMforcePolygon
 
