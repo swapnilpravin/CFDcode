@@ -1,6 +1,6 @@
 module IBM
 
-use settings, only : ny,nx,Ly,Lx,RADIUS,dt,rho,pi,n_ib,x_ib,y_ib
+use settings, only : ny,nx,Ly,Lx,RADIUS,dt,rho,pi,n_ib,x_ib,y_ib,A,T
 use partitioner, only : m, field, point_t
 
 contains
@@ -119,13 +119,14 @@ contains
 
 		integer :: i,j,k
 		
-		double precision, parameter :: A = 0.033		! Oscillation amplitude
-		double precision, parameter :: T = 3.2		! Oscillation time period
+		!double precision, parameter :: A = 0.033		! Oscillation amplitude
+		!double precision, parameter :: T = 3.2		! Oscillation time period
 		
-		double precision, parameter :: omega = 2*pi/T
+		double precision :: omega
 		double precision, dimension(n_ib) :: x_ib_t, y_ib_t
 		double precision :: U_ib, V_ib
 		
+		omega = 2*pi/T
 		x_ib_t = x_ib + A*sin(pi/2+omega*tstep*dt)
 		y_ib_t = y_ib
 		

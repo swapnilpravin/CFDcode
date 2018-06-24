@@ -14,4 +14,5 @@ tol,1e-6
 U0,0.03
 nLog,1
 nWrite,10
-RADIUS,0.1
+A,0.033
+T,3.2
