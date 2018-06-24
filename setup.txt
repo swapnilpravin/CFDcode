@@ -7,7 +7,7 @@ nt,1000
 nit,1000
 rho,850
 nu,9e-5
-omega_P,0.7
+omega_P,0.9
 omega_U,0.7
 omega_V,0.7
 tol,1e-6

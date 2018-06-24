@@ -38,8 +38,8 @@ subroutine channel()
     !if(id==0) print*, 'flow initialized.'
 
 	! Pressure driven force
-	forces%F = 8*nu*U0/Ly**2
-    !forces%F = 0
+	!forces%F = 8*nu*U0/Ly**2
+    forces%F = 0
 
     ! H: Sum of all IBM force
     ! B: Total body force (= F + H); F: Pressure force to drive the channel flow
