@@ -124,13 +124,13 @@ subroutine channel()
                 'Pressure solver iterations','integer',dble(NITS_final_P), &
 				'Velocity U error','double',E_U, &
 				'Velocity V error','double',E_V, &
-				'Velocity solver iterations','integer',dble(NITS_final_U), &
-				'Umax','double',Umax, &
-                'Pmax','double',Pmax, &
-				'Point1_u_mag','double',sqrt(mon_data(1,1)**2+mon_data(1,2)**2), &
-				'Point2_u_mag','double',sqrt(mon_data(2,1)**2+mon_data(2,2)**2), &
-				'Point3_u_mag','double',sqrt(mon_data(3,1)**2+mon_data(3,2)**2), &
-				'Point4_u_mag','double',sqrt(mon_data(4,1)**2+mon_data(4,2)**2)	)
+				'Velocity solver iterations','integer',dble(NITS_final_U) )
+				!'Umax','double',Umax, &
+                !'Pmax','double',Pmax, &
+				!'Point1_u_mag','double',sqrt(mon_data(1,1)**2+mon_data(1,2)**2), &
+				!'Point2_u_mag','double',sqrt(mon_data(2,1)**2+mon_data(2,2)**2), &
+				!'Point3_u_mag','double',sqrt(mon_data(3,1)**2+mon_data(3,2)**2), &
+				!'Point4_u_mag','double',sqrt(mon_data(4,1)**2+mon_data(4,2)**2)	)
             end if
             
             

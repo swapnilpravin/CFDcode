@@ -49,10 +49,10 @@ main.obj  : main.f90
 # 	ifort -o platelet_count.exe platelet_count.f90
 
 clean:
-	rm *.obj  *.mod *.exe *.obj ut *.dat *.plt *.tec *~ *pbs.e* *pbs_run.obj * *pbs_run.e* core.* channel
+	del *.obj  *.mod *.exe *.obj ut *.dat *.plt *.tec *~ *pbs.e* *pbs_run.obj * *pbs_run.e* core.* channel
 
 clean-data:
-	rm *.tec 
+	del *.tec 
 	
 test.obj : test.f90 
 	$(FC) $(FFLAGS) -c test.f90

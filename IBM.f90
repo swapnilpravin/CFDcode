@@ -122,19 +122,20 @@ contains
 		!double precision, parameter :: A = 0.033		! Oscillation amplitude
 		!double precision, parameter :: T = 3.2		! Oscillation time period
 		
-		double precision :: omega
-		double precision, dimension(n_ib) :: x_ib_t, y_ib_t
-		double precision :: U_ib, V_ib
+		!double precision :: omega
+		!double precision, dimension(n_ib) :: x_ib_t, y_ib_t
+		!double precision :: U_ib, V_ib
 		
-		omega = 2*pi/T
-		x_ib_t = x_ib + A*sin(pi/2+omega*tstep*dt)
-		y_ib_t = y_ib
+		!omega = 2*pi/T
+		!x_ib_t = x_ib + A*sin(pi/2+omega*tstep*dt)
+		!y_ib_t = y_ib
 		
-		U_ib = A*omega*cos(pi/2+omega*tstep*dt)
-		V_ib = 0
+		!U_ib = A*omega*cos(pi/2+omega*tstep*dt)
+		!V_ib = 0
 
 		do k=1,n_ib
-			polygon(k) = point_t(x_ib_t(k), y_ib_t(k))
+			!polygon(k) = point_t(x_ib_t(k), y_ib_t(k))
+			polygon(k) = point_t(x_ib(k), y_ib(k))
 		end do
 
 		field%eta = 0 !(Ny,m)
@@ -148,8 +149,10 @@ contains
 			end do
 		end do
 
-		Hx = field%eta*(U_ib-u(:,1:m))/(dt)
-		Hy = field%eta*(V_ib-v(:,1:m))/(dt)
+		!Hx = field%eta*(U_ib-u(:,1:m))/(dt)
+		!Hy = field%eta*(V_ib-v(:,1:m))/(dt)
+		Hx = field%eta*(-u(:,1:m))/(dt)
+		Hy = field%eta*(-v(:,1:m))/(dt)
 
 	end subroutine IBMforcePolygon
 

@@ -17,7 +17,7 @@ use mpi
     							! write: results to file every nwrite timesteps
     double precision :: RADIUS	! for testing: circle radius
     
-    double precision :: A, T	! Oscillating polygon parameters, amplitude and time period
+    !double precision :: A, T	! Oscillating polygon parameters, amplitude and time period
     
 
 	! IB points
@@ -61,8 +61,8 @@ use mpi
                 read (10,*) temp, U0
                 read (10,*) temp, nLog
                 read (10,*) temp, nWrite
-                read (10,*) temp, A
-                read (10,*) temp, T
+                !read (10,*) temp, A
+                !read (10,*) temp, T
 
 			    close(10)
 
@@ -85,8 +85,8 @@ use mpi
             call mpi_bcast(U0,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
             call mpi_bcast(nLog,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
             call mpi_bcast(nWrite,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-            call mpi_bcast(A,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-            call mpi_bcast(T,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            !call mpi_bcast(A,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            !call mpi_bcast(T,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 
             !call mpi_barrier(MPI_COMM_WORLD,ierr)
 
