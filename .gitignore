@@ -10,4 +10,7 @@ logfile
 *.mpeg
 *.avi
 *.pvsm
-
+*.obj
+*.exe
+*.pdb
+*.dwf
