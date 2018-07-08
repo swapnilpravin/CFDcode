@@ -292,8 +292,8 @@ contains
     character(len=100), parameter :: error_msg = 'Error (writeToTerminal): type must be "integer" or "double"'
 	character(len=100), parameter :: hline = '-----------------------------------------------------------------'
 	
-	101 format (A1,A30,A1,I10,A30)
-	102 format (A1,A30,A1,ES10.2,A30)
+	101 format (A1,A30,A1,I10,A25)
+	102 format (A1,A30,A1,ES10.2,A25)
 	
 	print *, hline
 	print '(A1,A15,I8,A25,ES10.2,A2,A6)', '|','Timestep = ',timestep,' Simulation time = ', timestep*dt, ' s', '|'

@@ -59,8 +59,8 @@ contains
 		
         ! dP/dx = 0 at x=0,Lx (including edge nodes, for cavity validation case)
 		! This BC applies here for the oscilating IBM element within fixed walls
-        if (id==0)          P(:,1) = P(:,2)
-        if (id==Nproc-1)    P(:,m) = P(:,m-1)
+        !if (id==0)          P(:,1) = P(:,2)
+        !if (id==Nproc-1)    P(:,m) = P(:,m-1)
 
 
     end subroutine setPressureBC_MPI
@@ -73,9 +73,33 @@ contains
     !---------------------------------------------------------------
     subroutine setVelocityBC_MPI(u,v)
         double precision, dimension(ny,0:m+1) :: u,v
+		
+		integer :: id, Nproc, ierr
 
-        call setToZero(u)
-        call setToZero(v)
+        call mpi_comm_rank(MPI_COMM_WORLD, id, ierr)
+        call mpi_comm_size(MPI_COMM_WORLD, Nproc, ierr)   
+		
+		!call setToZero(u)
+        !call setToZero(v)
+		
+		! Top: no slip 
+		u(1,:) = 0
+        u(ny,:) = 0
+		v(1,:) = 0
+        v(ny,:) = 0
+		
+		! Left: fixed inlet
+		if(id==0) then
+			u(:,1) = U0
+			v(:,1) = 0
+		end if
+		
+		! Right: outlet (zero gradient for u and v)
+		if(id==Nproc-1) then 
+			u(:,m) = u(:,m-1)
+			v(:,m) = v(:,m-1)
+		end if
+        
         !call setUCavity(u)
 
     end subroutine setVelocityBC_MPI
@@ -93,8 +117,9 @@ contains
 
         ! for 2D cavity
 		! Applies for the oscillating IBM element case
-        if(id==0)       u(:,1) = 0
-        if(id==Nproc-1) u(:,m) = 0
+        !if(id==0)       u(:,1) = 0
+        !if(id==Nproc-1) u(:,m) = 0
+
 
     end subroutine setToZero
 
