@@ -138,6 +138,7 @@ subroutine channel()
 
         if (mod(i,nWrite)==0) then
             call writeToTecplot2D_MPI(mesh%x,mesh%y,field%u,field%v,field%P,field%eta,i)
+            call writeImage(mesh%x,mesh%y,field%u,field%v,field%P,field%eta,i)
         end if
 
         call mpi_barrier(MPI_COMM_WORLD,ierr)

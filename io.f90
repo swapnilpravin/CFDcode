@@ -73,31 +73,25 @@ contains
 	write(*,*)
 	
 	end subroutine writeFlowDataToFile
-	
-	
-    !---------------------------------------------
-    ! writeToTecplot2D_MPI
-    !---------------------------------------------
-    subroutine writeToTecplot2D_MPI(x,y,u,v,P,eta,timestamp)
-		
-		double precision, dimension(ny,1:m) :: x,y,eta
-		double precision, dimension(ny,0:m+1) :: u,v,P
-		integer :: timestamp
 
-		integer :: imax, jmax
+
+	!-----------------------------------
+	! gatherVars: allocate complete arrays on root and gather data from all
+	! procs on root
+	!----------------------------------
+	subroutine gatherVars(x,y,eta,u,v,P,x_all,y_all,eta_all,u_all,v_all,P_all)
+		double precision, dimension(ny,1:m) :: x,y,eta
+		double precision, dimension(ny,0:m+1) :: u,v,P	
 		double precision, dimension(:,:), allocatable ::x_all, y_all, eta_all, u_all, v_all, P_all ! all gathered data (only at root)
         integer, dimension(:), allocatable :: recvcounts, displs ! only at root
-		integer i,j
-		character(30) :: filename
-
-        integer :: id, Nproc, ierr
+		integer :: id, Nproc, ierr
+		integer :: i
 
         call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
         call mpi_comm_size(MPI_COMM_WORLD,Nproc,ierr)
 	
-		imax = ny; jmax=nx
 
-        if (id==0) then
+		if (id==0) then
             allocate(x_all(ny,nx))
             allocate(y_all(ny,nx))
             allocate(eta_all(ny,nx))
@@ -117,10 +111,6 @@ contains
             do i=2,Nproc
                 displs(i) = sum(recvcounts(1:i-1))
             end do
-
-        !print*, recvcounts
-        !print*, displs
-
         end if
 
         call mpi_gatherv(x,ny*m,MPI_DOUBLE_PRECISION,x_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
@@ -129,8 +119,33 @@ contains
         call mpi_gatherv(u(:,1:m),ny*m,MPI_DOUBLE_PRECISION,u_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call mpi_gatherv(v(:,1:m),ny*m,MPI_DOUBLE_PRECISION,v_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call mpi_gatherv(P(:,1:m),ny*m,MPI_DOUBLE_PRECISION,P_all,recvcounts,displs,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+		end subroutine gatherVars
 
 
+	
+    !---------------------------------------------
+    ! writeToTecplot2D_MPI
+    !---------------------------------------------
+    subroutine writeToTecplot2D_MPI(x,y,u,v,P,eta,timestamp)
+		implicit none
+		
+		double precision, dimension(ny,1:m) :: x,y,eta
+		double precision, dimension(ny,0:m+1) :: u,v,P
+		integer :: timestamp
+
+		integer :: imax, jmax
+		double precision, dimension(:,:), allocatable ::x_all, y_all, eta_all, u_all, v_all, P_all ! all gathered data (only at root)
+		character(30) :: filename
+
+        integer :: id, Nproc, ierr
+
+        call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
+        call mpi_comm_size(MPI_COMM_WORLD,Nproc,ierr)
+	
+		imax = ny; jmax=nx
+
+		call gatherVars(x,y,eta,u,v,P,x_all,y_all,eta_all,u_all,v_all,P_all)
+        
         if (id==0) then
 		
             ! WRITE FLOW DATA	
@@ -161,7 +176,90 @@ contains
 	
 	end subroutine writeToTecplot2D_MPI
 
+	!-----------------------------------------------------------
+	! writeImage: Write a greyscale image for colormap of velocity magnitude
+	!-----------------------------------------------------------
+	subroutine writeImage(x,y,u,v,P,eta,timestamp)
+		double precision, dimension(ny,1:m) :: x,y,eta
+		double precision, dimension(ny,0:m+1) :: u,v,P
+		integer :: timestamp
+		
+		integer :: imax, jmax
+		double precision, dimension(:,:), allocatable ::x_all, y_all, eta_all, u_all, v_all, P_all ! all gathered data (only at root)
+		double precision, dimension(:,:), allocatable ::umag_all ! umag (only at root)
+		integer, dimension(:,:), allocatable :: img	! pixel data for image
+		double precision :: umag_max	! for normalization
+		character(30) :: filename
 
+        integer :: id, Nproc, ierr
+		integer,parameter :: nlevels = 100, px_max=1000
+		integer :: i,j, i_up, j_up, n_box
+		logical :: down_sample
+
+        call mpi_comm_rank(MPI_COMM_WORLD,id,ierr)
+        call mpi_comm_size(MPI_COMM_WORLD,Nproc,ierr)
+	
+		if (max(nx,ny)>px_max) then 
+			down_sample = .true. 
+		else 
+			down_sample = .false.
+		end if
+
+		call gatherVars(x,y,eta,u,v,P,x_all,y_all,eta_all,u_all,v_all,P_all)
+        
+        if (id==0) then
+			if(.not. allocated(umag_all)) allocate(umag_all(ny,nx))
+			umag_all = sqrt(u_all**2+v_all**2)	
+			where(eta_all .eq. 1) umag_all = 0	! inside immersed boundary
+			umag_max = maxval(umag_all)
+			umag_all = umag_all/umag_max	! Normalize umag_all
+
+			if (down_sample) then
+				if (nx>ny) then
+					jmax = px_max
+					imax = int(dble(ny)/dble(nx)*px_max)
+				else
+					imax = px_max
+					jmax = int(dble(nx)/dble(ny)*px_max)
+				end if
+				if(.not. allocated(img)) allocate(img(imax,jmax))
+				n_box = int(dble(ny)/dble(imax))+2
+				do i=1,imax
+					do j=1,jmax
+						i_up = int(dble(i)/imax*ny); j_up = int(dble(j)/jmax*nx)
+						img(i,j) = sum(umag_all(i_up-n_box/2:i_up+n_box/2,j_up-n_box/2:j_up+n_box/2))/(n_box+1)**2*nlevels
+					end do
+				end do
+			else
+				imax = ny; jmax = nx
+				if(.not. allocated(img)) allocate(img(imax,jmax))
+				img = int(umag_all*nlevels)
+			end if
+
+			!print*, imax, jmax
+
+			100 format(A5,I0.10,A4)
+            write(filename,100) 'umag_',timestamp,'.pgm'	! greyscale image
+       
+            open(unit=10,file=filename,status='replace',action='write')
+			write(10,'(A)') 'P2'
+			write(10,'(A)') '# u_mag greyscale image in PGM format'
+			write(10,'(I0,A,I0)') jmax,' ',imax
+			write(10,'(I0)') nlevels
+			do i=imax,1,-1
+				do j=1,jmax
+					write(10,'(I0,A)',advance='no') img(i,j), ' '
+				end do
+				write(10,*) 	! new line
+			end do
+
+			close(10)
+			write(*,*)		
+			write(*,'(A35,A20,A2,A25)') '--> Image written to file: ',filename
+			write(*,*)
+		end if
+			
+		end subroutine writeImage
 
 
     !--------------------------------------------------------------
@@ -521,8 +619,6 @@ contains
 			end if
 		end do
 		end if
-
-		!call mpi_barrier(MPI_COMM_WORLD,ierr)
 
 		if (id==0) then
 			do i=1,n_mon
